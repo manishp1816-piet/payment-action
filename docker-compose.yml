@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: payment-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secretpassword
+    volumes:
+      - mongo-data:/data/db
+
+  payment-app:
+    build: .
+    container_name: payment-action-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://admin:secretpassword@mongodb:27017/paymentdb?authSource=admin
+
+volumes:
+  mongo-data:
